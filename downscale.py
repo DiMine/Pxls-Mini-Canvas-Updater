@@ -6,8 +6,8 @@ from clueless import palettize_array, detemplatize, templatize, get_style_from_n
 import asyncio
 import json
 
-# def lambda_handler(event, context):
-#     asyncio.run(stuff())
+def lambda_handler(event, context):
+    asyncio.run(stuff())
 
 async def stuff():
     s3_client = boto3.client('s3')
@@ -15,7 +15,7 @@ async def stuff():
         Bucket='pogpega', 
         Key='info.json'
     )["Body"].read().decode('utf-8'))
-    
+
     PALETTE = [f"#{color['value']}" for color in info["palette"]]
     
     data = await get_content("https://pxls.space/boarddata", "bytes")
@@ -47,5 +47,3 @@ async def stuff():
             Body=output.getvalue(),
             ContentType='image/png'
         )
-
-asyncio.run(stuff())
