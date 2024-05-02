@@ -5,6 +5,10 @@ import io
 from clueless import palettize_array, detemplatize, templatize, get_style_from_name, get_content
 import asyncio
 import json
+import os
+
+BUCKET_PRIVATE = os.environ['BUCKET_PRIVATE']
+BUCKET_PUBLIC = os.environ['BUCKET_PUBLIC']
 
 def lambda_handler(event, context):
     asyncio.run(stuff())
@@ -12,7 +16,7 @@ def lambda_handler(event, context):
 async def stuff():
     s3_client = boto3.client('s3')
     info = json.loads(s3_client.get_object(
-        Bucket='pogpega', 
+        Bucket=BUCKET_PRIVATE, 
         Key='info.json'
     )["Body"].read().decode('utf-8'))
 
@@ -34,7 +38,7 @@ async def stuff():
     with io.BytesIO() as output:
         image.save(output, format='PNG')
         s3_client.put_object(
-            Bucket='a.pogpega.farm',
+            Bucket=BUCKET_PUBLIC,
             Key='avogadro.png',
             Body=output.getvalue(),
             ContentType='image/png'
@@ -42,7 +46,7 @@ async def stuff():
     with io.BytesIO() as output:
         templatized_image.save(output, format='PNG')
         s3_client.put_object(
-            Bucket='a.pogpega.farm',
+            Bucket=BUCKET_PUBLIC,
             Key='avogadro_detemp.png',
             Body=output.getvalue(),
             ContentType='image/png'

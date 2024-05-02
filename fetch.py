@@ -2,6 +2,9 @@ import json
 from clueless import get_content
 import boto3
 import asyncio
+import os
+
+BUCKET_PRIVATE = os.environ['BUCKET_PRIVATE']
 
 def lambda_handler(event, context):
     asyncio.run(stuff())
@@ -17,7 +20,7 @@ async def stuff():
     
     s3_client = boto3.client("s3")
     s3_client.put_object(
-        Bucket='pogpega',
+        Bucket=BUCKET_PRIVATE,
         Key='info.json',
         Body=json.dumps(saved_info),
         ContentType='application/json'
