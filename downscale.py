@@ -61,5 +61,3 @@ async def stuff(event):
             Body=output.getvalue(),
             ContentType='image/png'
         )
-
-asyncio.run(stuff({'url': 'https://cdn.discordapp.com/attachments/1197717552361648180/1239576410247663636/board.png?ex=66436cfe&is=66421b7e&hm=fd944a1faff843d763fc41e1753db5652fe959bbccab74b97a122af1298f9a03&'}))
