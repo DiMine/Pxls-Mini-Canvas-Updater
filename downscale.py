@@ -21,7 +21,6 @@ async def stuff(event):
         Bucket=BUCKET_PRIVATE, 
         Key='info.json'
     )["Body"].read().decode('utf-8'))
-
     PALETTE = [f"#{color['value']}" for color in info["palette"]]
     
     if 'url' in event:
@@ -30,17 +29,28 @@ async def stuff(event):
         data = data.getdata()
         data = np.array(data)
         arr = np.asarray(list(data), dtype=np.uint8).reshape(
-        info["width"], info["height"], 4
+        info["height"], info["width"], 4
         )
     else:
         data = await get_content("https://pxls.space/boarddata", "bytes")
         arr = np.asarray(list(data), dtype=np.uint8).reshape(
-        info["width"], info["height"]
+        info["height"], info["width"]
         )
         arr = palettize_array(arr, PALETTE)
-
-    arr = detemplatize(arr, 80)
-    image = Image.fromarray(arr, mode='RGBA')
+    
+    del info
+    del data
+    
+    # arr = detemplatize(arr, 80)
+    image = Image.fromarray(arr)
+    coeffs = [1.62443946e+01,  1.80493274e+01, -3.97085202e+02,  1.84857699e-13,
+                6.78026906e+01,  3.39013453e+02,  1.19556707e-17,  2.24215247e-02]
+    image = image.transform((148, 122), Image.PERSPECTIVE, coeffs, Image.NEAREST)
+    beast = Image.open(io.BytesIO(s3_client.get_object(
+        Bucket=BUCKET_PRIVATE,
+        Key='MrBeast.png'
+        )['Body'].read()))
+    image.paste(beast, (0, 0), beast)
     style = get_style_from_name('custom')
     arr = templatize(style, image, PALETTE)
     templatized_image = Image.fromarray(arr, mode='RGBA')
